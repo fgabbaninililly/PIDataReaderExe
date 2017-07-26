@@ -35,7 +35,7 @@ namespace PIDataReaderExe {
 		}
 
 		public void run(string[] args) {
-			pidrCtrl = new PIDRController(Version.getVersion(), PIDataReaderLib.Version.getVersion(), false);
+			pidrCtrl = new PIDRController(Version.getVersion(), false);
 			int res = pidrCtrl.start(args);
 			if (ExitCodes.EXITCODE_SUCCESS != res) {
 				logger.Fatal("Failed to start service! Reason: {0}", res);
