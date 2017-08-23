@@ -15,6 +15,8 @@ namespace PIDataReaderExe {
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private PIDRController pidrCtrl;
 
+		private static AutoResetEvent waitTimerDisposedHandle = new AutoResetEvent(false);
+
 		[DllImport("Kernel32")]
 		private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
 		private delegate bool EventHandler(CtrlType sig);
@@ -38,10 +40,16 @@ namespace PIDataReaderExe {
 			pidrCtrl = new PIDRController(Version.getVersion(), false);
 			int res = pidrCtrl.start(args);
 			if (ExitCodes.EXITCODE_SUCCESS != res) {
-				logger.Fatal("Failed to start service! Reason: {0}", res);
+				logger.Fatal("Failed to start service! Reason: {0}", ExitCodes.Instance[res]);
+				logger.Fatal("Press any key to continue");
+				Console.ReadKey();
+				return;
 			}
 			appClosingHandler += new EventHandler(this.appClosingHandlerImpl);
 			SetConsoleCtrlHandler(appClosingHandler, true);
+
+			waitTimerDisposedHandle.WaitOne();
+			logger.Trace("Timer disposed handle unblocked");
 		}
 
 		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
