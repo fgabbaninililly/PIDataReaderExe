@@ -15,7 +15,7 @@ namespace PIDataReaderExe {
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private PIDRController pidrCtrl;
 
-		private static AutoResetEvent waitTimerDisposedHandle = new AutoResetEvent(false);
+		private static AutoResetEvent appExitPreventionEvent = new AutoResetEvent(false);
 
 		[DllImport("Kernel32")]
 		private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
@@ -48,7 +48,9 @@ namespace PIDataReaderExe {
 			appClosingHandler += new EventHandler(this.appClosingHandlerImpl);
 			SetConsoleCtrlHandler(appClosingHandler, true);
 
-			waitTimerDisposedHandle.WaitOne();
+			if (pidrCtrl.isScheduled()) {
+				appExitPreventionEvent.WaitOne();
+			}
 			logger.Trace("Timer disposed handle unblocked");
 		}
 
