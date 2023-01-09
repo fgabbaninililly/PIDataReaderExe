@@ -35,8 +35,6 @@ namespace PIDataReaderExe {
 			int res = pidrCtrl.start(args);
 			if (ExitCodes.EXITCODE_SUCCESS != res) {
 				logger.Fatal("Failed to start service! Reason: {0}", ExitCodes.Instance[res]);
-				logger.Fatal("Press any key to continue");
-				Console.ReadKey();
 				return;
 			}
 			appClosingHandler += new EventHandler(this.appClosingHandlerImpl);
